@@ -34,7 +34,7 @@ class FilmService:
 
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
         doc = await self.elastic.get('movies', film_id)
-        return Film(**doc['_source'])
+        return Film(id=film_id, title=doc['_source']['title'], description=doc['_source']['description'])
 
     async def _film_from_cache(self, film_id: str) -> Optional[Film]:
         # Пытаемся получить данные о фильме из кеша, используя команду get

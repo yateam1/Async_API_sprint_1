@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+
+  async_app:
+    container_name: async_app
+    build:
+      context: .
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/usr/src/app/

@@ -38,8 +38,8 @@ app.include_router(film.router, prefix='/v1/film', tags=['film'])
 if __name__ == '__main__':
     uvicorn.run(
         'main:app',
-        host='0.0.0.0',
-        port=8000,
+        host=config.PROJECT_HOST,
+        port=config.PROJECT_PORT,
         log_config=LOGGING,
         log_level=logging.DEBUG,
     )
