@@ -9,7 +9,14 @@ services:
     env_file:
       - .env
     restart: always
+    networks:
+      - movie_net
     ports:
       - 8000:8000
     volumes:
       - .:/usr/src/app/
+
+networks:
+  movie_net:
+    name: custom_network
+    driver: bridge
