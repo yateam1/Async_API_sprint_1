@@ -16,6 +16,10 @@ class Film(BaseModel):
 # Внедряем FilmService с помощью Depends(get_film_service)
 @router.get('/{film_id}', response_model=Film)
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
+    """
+    Предоставляет информацию о кинопроизведении по его id
+    :param film_id:
+    """
     film = await film_service.get_by_id(film_id)
     if not film:
         # Если фильм не найден, отдаём 404 статус
