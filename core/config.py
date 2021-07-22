@@ -10,6 +10,7 @@ class ProjectSettings(BaseModel):
     name: str
     host: str
     port: int
+    per_page: int
 
 
 class RedisSettings(BaseModel):
@@ -36,6 +37,7 @@ config = Config.parse_file('config.json')
 PROJECT_NAME = config.project.name  # Название проекта. Используется в Swagger-документации
 PROJECT_HOST = config.project.host
 PROJECT_PORT = config.project.port
+PER_PAGE = config.project.per_page
 
 # Настройки Redis
 REDIS_HOST = config.redis.host
