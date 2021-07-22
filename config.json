@@ -1,0 +1,15 @@
+{
+  "project": {
+      "name": "movies",
+      "host": "movies_app",
+      "port": 8000
+    },
+  "redis": {
+      "host": "185.20.82.11",
+      "port": 6379
+    },
+  "elastic": {
+      "host": "185.20.82.11",
+      "port": 9200
+    }
+}
