@@ -6,17 +6,63 @@ services:
     container_name: async_app
     build:
       context: .
-    env_file:
-      - .env
     restart: always
     networks:
-      - movie_net
+      - apinet
     ports:
       - 8000:8000
     volumes:
       - .:/usr/src/app/
 
+  admin:
+    container_name: admin
+    image: "ghcr.io/yateam-1/admin/admin:dev"
+    depends_on:
+      - db
+
+  etl:
+    container_name: etl
+    image: "ghcr.io/yateam-1/etl/etl:dev"
+    networks:
+      - etlnet
+    depends_on:
+      - db
+
+  db:
+    container_name: postgres
+    image: postgres:13
+    restart: always
+    networks:
+      - adminnet
+      - etlnet
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    environment:
+      - discovery.type=single-node
+    restart: always
+    networks:
+      - etlnet
+      - apinet
+    volumes:
+      - esdata:/data
+
+  redis:
+    container_name: redis
+    image: redis:alpine3.14
+    networks:
+      - apinet
+      - etlnet
+
+
+volumes:
+  pgdata:
+  esdata:
+
 networks:
-  movie_net:
-    name: custom_network
-    driver: bridge
+  apinet:
+  adminnet:
+  etlnet:
