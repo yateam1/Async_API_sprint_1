@@ -2,12 +2,10 @@ version: '3.7'
 
 services:
 
-  async_app:
-    container_name: async_app
+  movies_api:
+    container_name: movies_api
     build:
       context: .
-    env_file:
-      - .env
     restart: always
     networks:
       - movie_net
@@ -18,5 +16,5 @@ services:
 
 networks:
   movie_net:
-    name: custom_network
+    name: movie_net
     driver: bridge

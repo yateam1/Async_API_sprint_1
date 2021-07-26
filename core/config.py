@@ -1,28 +1,51 @@
 import os
-
-from environs import Env
 from logging import config as logging_config
+
+from pydantic import BaseModel
 
 from core.logger import LOGGING
 
-env = Env()
-env.read_env()
 
-# Применяем настройки логирования
-logging_config.dictConfig(LOGGING)
+class ProjectSettings(BaseModel):
+    name: str
+    host: str
+    port: int
+    per_page: int
 
-# Название проекта. Используется в Swagger-документации
-PROJECT_NAME = env.str('PROJECT_NAME', 'movies')
-PROJECT_HOST = env.str('PROJECT_HOST', '0.0.0.0')
-PROJECT_PORT = env.int('PROJECT_PORT', 8000)
+
+class RedisSettings(BaseModel):
+    host: str
+    port: int
+
+
+class ElasticSettings(BaseModel):
+    host: str
+    port: int
+
+
+class Config(BaseModel):
+    project: ProjectSettings
+    redis: RedisSettings
+    elastic: ElasticSettings
+
+
+logging_config.dictConfig(LOGGING)  # Применяем настройки логирования
+
+config = Config.parse_file('config.json')
+
+# Настройки проекта
+PROJECT_NAME = config.project.name  # Название проекта. Используется в Swagger-документации
+PROJECT_HOST = config.project.host
+PROJECT_PORT = config.project.port
+PER_PAGE = config.project.per_page
 
 # Настройки Redis
-REDIS_HOST = env.str('REDIS_HOST', '127.0.0.1')
-REDIS_PORT = env.int('REDIS_PORT', 6379)
+REDIS_HOST = config.redis.host
+REDIS_PORT = config.redis.port
 
 # Настройки Elasticsearch
-ELASTIC_HOST = env.str('ELASTIC_HOST', '127.0.0.1')
-ELASTIC_PORT = env.int('ELASTIC_PORT', 9200)
+ELASTIC_HOST = config.elastic.host
+ELASTIC_PORT = config.elastic.port
 
 # Корень проекта
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

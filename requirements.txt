@@ -5,4 +5,3 @@ orjson==3.6.0
 pydantic==1.8.2
 typing-extensions==3.10.0.0
 uvicorn==0.14.0
-environs==9.3.2

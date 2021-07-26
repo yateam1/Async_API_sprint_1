@@ -8,6 +8,7 @@ from fastapi.responses import ORJSONResponse
 
 from api.v1 import film
 from core import config
+from core.config import PROJECT_HOST, PROJECT_PORT
 from core.logger import LOGGING
 from db import elastic, redis
 
@@ -38,8 +39,8 @@ app.include_router(film.router, prefix='/v1/film', tags=['film'])
 if __name__ == '__main__':
     uvicorn.run(
         'main:app',
-        host=config.PROJECT_HOST,
-        port=config.PROJECT_PORT,
+        host=PROJECT_HOST,
+        port=PROJECT_PORT,
         log_config=LOGGING,
         log_level=logging.DEBUG,
     )
