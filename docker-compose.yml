@@ -2,8 +2,8 @@ version: '3.7'
 
 services:
 
-  movies_app:
-    container_name: movies_app
+  movies_api:
+    container_name: movies_api
     build:
       context: .
     restart: always
@@ -16,5 +16,5 @@ services:
 
 networks:
   movie_net:
-    name: custom_network
+    name: movie_net
     driver: bridge
