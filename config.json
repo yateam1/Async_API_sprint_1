@@ -1,16 +1,16 @@
 {
   "project": {
       "name": "movies",
-      "host": "movies_api",
+      "host": "movie_api",
       "port": 8000,
       "per_page": 10
     },
   "redis": {
-      "host": "185.20.82.11",
+      "host": "redis",
       "port": 6379
     },
   "elastic": {
-      "host": "185.20.82.11",
+      "host": "elasticsearch",
       "port": 9200
     }
 }
