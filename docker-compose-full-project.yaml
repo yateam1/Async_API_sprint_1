@@ -92,9 +92,6 @@ services:
       - redis
       - elasticsearch
       - db
-    entrypoint: [ "./wait-for-it.sh", "-s" ,"-t", "20", "elasticsearch:9200", "--" ]
-    command: [ "echo", "You Know, for Search" ]
-
 
   movie_api:
     image: ${DOCKER_REGISTRY-}movies_api
@@ -110,8 +107,6 @@ services:
       - redis
       - elasticsearch
       - db
-    entrypoint: [ "./wait-for-it.sh", "-s" ,"-t", "20", "elasticsearch:9200", "--" ]
-    command: ["echo", "You Know, for Search"]
     volumes:
       - ./:/usr/src/app/
 
