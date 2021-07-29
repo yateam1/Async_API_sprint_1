@@ -2,8 +2,8 @@ version: '3.7'
 
 services:
 
-  movies_api:
-    container_name: movies_api
+  movie_api:
+    container_name: movie_api
     build:
       context: .
     restart: always

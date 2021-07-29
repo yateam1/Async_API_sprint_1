@@ -93,9 +93,9 @@ services:
       - elasticsearch
       - db
 
-  movies_api:
+  movie_api:
     image: ${DOCKER_REGISTRY-}movies_api
-    container_name: movies_api
+    container_name: movie_api
     build:
       context: .
     restart: always
@@ -104,7 +104,9 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - movie_etl
+      - redis
+      - elasticsearch
+      - db
     volumes:
       - ./:/usr/src/app/
 
