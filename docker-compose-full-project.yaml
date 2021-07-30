@@ -46,7 +46,7 @@ services:
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   admin_panel:
-    image: "ghcr.io/yateam-1/admin/admin:dev"
+    image: "ghcr.io/s-klimov/admin_panel_sprint_2:main"
     env_file:
       - .env
     restart: always
@@ -76,7 +76,7 @@ services:
 
   movie_etl:
     container_name: movie_etl
-    image: "ghcr.io/yateam-1/etl/etl:dev"
+    image: "ghcr.io/s-klimov/etl:main"
     env_file:
       - .env
     restart: always
