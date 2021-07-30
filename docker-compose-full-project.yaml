@@ -43,20 +43,18 @@ services:
       - 5432:5432
     volumes:
       - db-data-4:/var/lib/postgresql/data
-      - ../Admin_panel_sprint_2/movies_admin/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   admin_panel:
-    container_name: admin_panel
-    build:
-      context: ../Admin_panel_sprint_2/movies_admin/
+    image: "ghcr.io/yateam-1/admin/admin:dev"
     env_file:
       - .env
     restart: always
     networks:
       - movie_net
     volumes:
-      - ../Admin_panel_sprint_2/movies_admin/:/usr/src/app/
       - ./config.json:/usr/src/app/config.json
+      - ./static/:/usr/src/app/static
     depends_on:
       - db
 
@@ -72,21 +70,19 @@ services:
     ports:
       - 80:80
     volumes:
-      - ../Admin_panel_sprint_2/movies_admin/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ../Admin_panel_sprint_2/movies_admin/docker/nginx/configs:/etc/nginx/conf.d:ro
-      - ../Admin_panel_sprint_2/movies_admin/static/:/static
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/configs:/etc/nginx/conf.d:ro
+      - ./static/:/static
 
   movie_etl:
     container_name: movie_etl
-    build:
-      context: ../ETL/postgres_to_es/
+    image: "ghcr.io/yateam-1/etl/etl:dev"
     env_file:
       - .env
     restart: always
     networks:
       - movie_net
     volumes:
-      - ../ETL/postgres_to_es/:/usr/src/postgres_to_es/
       - ./config.json:/usr/src/postgres_to_es/config.json
     depends_on:
       - redis
@@ -107,7 +103,7 @@ services:
       - elasticsearch
       - db
     volumes:
-      - ./:/usr/src/app/
+      - .:/usr/src/app/
 
 
 volumes:
