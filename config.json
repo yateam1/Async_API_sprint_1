@@ -1,5 +1,9 @@
 {
-  "project": {
+  "postgres_db": {
+      "host": "db",
+      "port": 5432
+    },
+  "movie_api": {
       "name": "movies",
       "host": "movie_api",
       "port": 8000,
@@ -9,7 +13,7 @@
       "host": "redis",
       "port": 6379
     },
-  "elastic": {
+  "elasticsearch": {
       "host": "elasticsearch",
       "port": 9200
     }

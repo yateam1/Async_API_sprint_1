@@ -46,7 +46,6 @@ services:
       - ../Admin_panel_sprint_2/movies_admin/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   admin_panel:
-    image: ${DOCKER_REGISTRY-}admin_panel
     container_name: admin_panel
     build:
       context: ../Admin_panel_sprint_2/movies_admin/
@@ -57,6 +56,7 @@ services:
       - movie_net
     volumes:
       - ../Admin_panel_sprint_2/movies_admin/:/usr/src/app/
+      - ./config.json:/usr/src/app/config.json
     depends_on:
       - db
 
@@ -77,7 +77,6 @@ services:
       - ../Admin_panel_sprint_2/movies_admin/static/:/static
 
   movie_etl:
-    image: ${DOCKER_REGISTRY-}movie_etl
     container_name: movie_etl
     build:
       context: ../ETL/postgres_to_es/
@@ -88,13 +87,13 @@ services:
       - movie_net
     volumes:
       - ../ETL/postgres_to_es/:/usr/src/postgres_to_es/
+      - ./config.json:/usr/src/postgres_to_es/config.json
     depends_on:
       - redis
       - elasticsearch
       - db
 
   movie_api:
-    image: ${DOCKER_REGISTRY-}movies_api
     container_name: movie_api
     build:
       context: .
