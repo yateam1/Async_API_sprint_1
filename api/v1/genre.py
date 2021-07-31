@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Tuple
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -12,18 +13,16 @@ class Genre(BaseModel):
     name: str
 
 
-# Внедряем FilmService с помощью Depends(get_genre_service)
+# Внедряем GenreService с помощью Depends(get_genre_service)
 @router.get('/{genre_id}', response_model=Genre)
 async def genre_details(genre_id: str, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
     """
-    Предоставляет информацию о кинопроизведении по его id
+    Предоставляет информацию о жанре по его id
     :param genre_id:
     """
     genre = await genre_service.get_by_id(genre_id)
     if not genre:
-        # Если фильм не найден, отдаём 404 статус
-        # Желательно пользоваться уже определёнными HTTP-статусами, которые содержат enum
-                # Такой код будет более поддерживаемым
+        # Если жанр не найден, отдаём 404 статус
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genre not found')
 
     # Перекладываем данные из models.genre в genre
@@ -33,3 +32,13 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
         # вы бы предоставляли клиентам данные, которые им не нужны
         # и, возможно, данные, которые опасно возвращать
     return Genre(id=genre.id, name=genre.name)
+
+
+@router.get('', response_model=Genre)
+async def genre_list(genre_service: GenreService = Depends(get_genre_service)) -> Tuple[Genre]:
+    """
+    Предоставляет информацию о всех жанрах
+    :param genre_id:
+    """
+    pass
+    raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genres not found')
