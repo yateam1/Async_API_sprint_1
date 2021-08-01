@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import Optional
+from uuid import UUID
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch
@@ -18,7 +19,7 @@ class FilmService:
         self.elastic = elastic
 
     # get_by_id возвращает объект фильма. Он опционален, так как фильм может отсутствовать в базе
-    async def get_by_id(self, film_id: str) -> Optional[Film]:
+    async def get_by_id(self, film_id: UUID) -> Optional[Film]:
         # Пытаемся получить данные из кеша, потому что оно работает быстрее
         film = await self._film_from_cache(film_id)
         if not film:
@@ -32,19 +33,27 @@ class FilmService:
 
         return film
 
-    async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
+    async def _get_film_from_elastic(self, film_id: UUID) -> Optional[Film]:
         doc = await self.elastic.get('movies', film_id)
-        return Film(id=film_id, title=doc['_source']['title'], description=doc['_source']['description'])
+        return Film(
+            id=film_id,
+            title = doc['_source']['title'],
+            description = doc['_source']['description'],
+            type = doc['_source']['type'],
+            creation_date = doc['_source']['creation_date'],
+            # **doc['_source'],
+        )
 
-    async def _film_from_cache(self, film_id: str) -> Optional[Film]:
+    async def _film_from_cache(self, film_id: UUID) -> Optional[Film]:
         # Пытаемся получить данные о фильме из кеша, используя команду get
         # https://redis.io/commands/get
-        data = await self.redis.get(film_id)
+        data = await self.redis.get(str(film_id))
         if not data:
             return None
 
         # pydantic предоставляет удобное API для создания объекта моделей из json
         film = Film.parse_raw(data)
+        film.id = UUID(film.id)  # Восстанавливаю тип айдишника записи
         return film
 
     async def _put_film_to_cache(self, film: Film):
@@ -52,7 +61,7 @@ class FilmService:
         # Выставляем время жизни кеша — 5 минут
         # https://redis.io/commands/set
         # pydantic позволяет сериализовать модель в json
-        await self.redis.set(film.id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+        await self.redis.set(str(film.id), film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
 
 
 @lru_cache()

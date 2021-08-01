@@ -1,24 +1,38 @@
 # Запуск проекта
 
-Проект запускается в Docker-контейнерах
-## Вариант 1. Запуск только текущего приложения
-Команды для запуска приложения:  
-```$ docker-compose build```  
-```$ docker-compose up -d```  
+Проект запускается в Docker-контейнерах вместе со связанными приложениями
 
-## Вариант 2. Запуск всех связанных приложений
-Перед запуском контейнеров нужно файл .env.dist переименовать в .env.  
+### Перед запуском контейнеров нужно файл .env.dist переименовать в .env.  
 В файле указать следующие переменные:
 - DJANGO_SECRET_KEY=<секретный ключ Django>
-
-- POSTGRES_HOST=db
-- POSTGRES_PORT=5432
 - POSTGRES_DB=movies
 - POSTGRES_USER=movies
 - POSTGRES_PASSWORD=<укажите ваш пароль>
-- REDIS_HOST=redis
-- ELASTICSEARCH_HOST=elasticsearch
 
-Команды для запуска приложений:  
-```$ docker-compose -f docker-compose-full-project.yaml build```  
-```$ docker-compose -f docker-compose-full-project.yaml up -d```  
+### Команды для запуска приложений:  
+```bash
+docker-compose build
+```  
+```bash
+docker-compose up -d
+```
+
+### Заполнение базы данных фикстурами
+1. С помощью команды ```docker ps``` узнайте имя контейнера c приложением admin_panel  
+2. Войдите в контейнер ```docker exec -it <имя контейнера> bash```  
+3. Запустите консоль django shell командой ```python manage.py shell```  
+4. Внутри консоли выполните команды:  
+```python
+from movie.factories import make_objects
+make_objects()
+```  
+
+### Заполнение индексов ElasticSearch
+После перезапуска контейнера с ElasticSearch содержимое его индексов будет утеряно.
+Для восстановления необходимо:
+1. С помощью команды ```docker ps``` узнайте имя контейнера, в котором запущен redis
+2. Войдите в контейнер ```docker exec -it <имя контейнера> redis-cli```
+3. Удалите ключ, который содержит дату предыдущего обновления индексов, командой ```# del Movie_ETL [movies]```
+
+**Обратите внимание, что на запуск и обновление индексов ElasticSearch требуется около трех минут.  
+Период обновления индексов - через каждые три минуты**
