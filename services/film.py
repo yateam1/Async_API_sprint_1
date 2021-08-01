@@ -1,10 +1,13 @@
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
+from datetime import datetime
+import json
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch
 from fastapi import Depends
+from pydantic.types import Json
 
 from db.elastic import get_elastic
 from db.redis import get_redis
@@ -36,11 +39,11 @@ class FilmService:
     async def _get_film_from_elastic(self, film_id: UUID) -> Optional[Film]:
         doc = await self.elastic.get('movies', film_id)
         return Film(
-            id=film_id,
-            title = doc['_source']['title'],
-            description = doc['_source']['description'],
-            type = doc['_source']['type'],
-            creation_date = doc['_source']['creation_date'],
+            id=doc.get('_id'),
+            title = doc['_source'].get('title'),
+            description = doc['_source'].get('description'),
+            type = doc['_source'].get('type'),
+            creation_date = datetime.strptime(doc['_source'].get('creation_date'), '%Y-%m-%d'),
             # **doc['_source'],
         )
 
@@ -53,7 +56,7 @@ class FilmService:
 
         # pydantic предоставляет удобное API для создания объекта моделей из json
         film = Film.parse_raw(data)
-        film.id = UUID(film.id)  # Восстанавливаю тип айдишника записи
+        film.id = film.id  # Восстанавливаю тип айдишника записи
         return film
 
     async def _put_film_to_cache(self, film: Film):
@@ -62,6 +65,26 @@ class FilmService:
         # https://redis.io/commands/set
         # pydantic позволяет сериализовать модель в json
         await self.redis.set(str(film.id), film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+
+    async def _get_all(self) -> List[Film]:
+        data = await self.elastic.search(
+            index='movies',
+            body={"query": {"match_all": {}}},
+            size=3
+        )
+        out = []
+        for doc in data.get('hits').get('hits'):
+            out.append(
+                Film(
+                    id=doc.get('_id'),
+                    title = doc['_source'].get('title'),
+                    description = doc['_source'].get('description'),
+                    type = doc['_source'].get('type'),
+                    creation_date = datetime.strptime(doc['_source'].get('creation_date'), '%Y-%m-%d'),
+                    # **doc['_source'],
+                )
+            )
+        return out
 
 
 @lru_cache()

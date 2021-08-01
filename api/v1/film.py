@@ -1,6 +1,10 @@
+from datetime import datetime
+import json
 from http import HTTPStatus
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi_pagination import Page, add_pagination, paginate
 from pydantic import BaseModel
 
 from services.film import FilmService, get_film_service
@@ -9,8 +13,21 @@ router = APIRouter()
 
 
 class Film(BaseModel):
-    id: str
+    # id: str
     title: str
+    description: str
+    type: str
+
+
+@router.get('/all', response_model=List[Film])
+async def movies_list(film_service: FilmService = Depends(get_film_service)) -> List[Film]:
+    """
+    Предоставляет информацию о всех фильмах
+    """
+    films = await film_service._get_all()
+    return films
+    # return paginate(films)
+    # raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='films not found')
 
 
 # Внедряем FilmService с помощью Depends(get_film_service)
@@ -33,4 +50,5 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
         # Если бы использовалась общая модель для бизнес-логики и формирования ответов API
         # вы бы предоставляли клиентам данные, которые им не нужны
         # и, возможно, данные, которые опасно возвращать
-    return Film(**film)
+    out = json.loads(film.json())
+    return Film(**out)
