@@ -62,17 +62,15 @@ class FilmService:
     async def _get_all(self) -> List[Film]:
         data = await self.elastic.search(
             index='movies',
-            body={"query": {"match_all": {}}},
-            size = SAMPLE_SIZE
+            body={
+                "query": {
+                    "match_all": {}
+                },
+                'stored_fields': []
+            },
+            size=SAMPLE_SIZE
         )
-        out = []
-        for doc in data.get('hits').get('hits'):
-            out.append(
-                Film(
-                    id=doc.get('_id'),
-                    **doc['_source'],
-                )
-            )
+        out = [await self.get_by_id(doc['_id']) for doc in data.get('hits').get('hits')]
         return out
 
 

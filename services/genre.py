@@ -62,17 +62,15 @@ class GenreService:
     async def _get_all(self) -> List[Genre]:
         data = await self.elastic.search(
             index='genres',
-            body={"query": {"match_all": {}}},
+            body={
+                "query": {
+                    "match_all": {}
+                },
+                'stored_fields': []
+            },
             size = SAMPLE_SIZE
         )
-        out = []
-        for doc in data.get('hits').get('hits'):
-            out.append(
-                Genre(
-                    id=doc.get('_id'),
-                    **doc['_source'],
-                )
-            )
+        out = [await self.get_by_id(doc['_id']) for doc in data.get('hits').get('hits')]
         return out
 
 

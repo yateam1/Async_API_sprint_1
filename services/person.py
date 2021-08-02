@@ -55,18 +55,17 @@ class PersonService:
     async def _get_all(self) -> List[Person]:
         data = await self.elastic.search(
             index='persons',
-            body={"query": {"match_all": {}}},
-            size = SAMPLE_SIZE
+            body={
+                "query": {
+                    "match_all": {}
+                },
+                'stored_fields': []
+            },
+            size=SAMPLE_SIZE
         )
-        out = []
-        for doc in data.get('hits').get('hits'):
-            out.append(
-                Person(
-                    id=doc.get('_id'),
-                    **doc['_source'],
-                )
-            )
+        out = [await self.get_by_id(doc['_id']) for doc in data.get('hits').get('hits')]
         return out
+
 
 @lru_cache()
 def get_person_service(
