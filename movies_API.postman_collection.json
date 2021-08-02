@@ -134,7 +134,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "127.0.0.1:8000/api/v1/film",
+							"raw": "127.0.0.1:8000/api/v1/film/",
 							"host": [
 								"127",
 								"0",
@@ -145,7 +145,8 @@
 							"path": [
 								"api",
 								"v1",
-								"film"
+								"film",
+								""
 							]
 						}
 					},
@@ -275,6 +276,59 @@
 									"key": "pretty",
 									"value": null
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Persons",
+			"item": [
+				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/person/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"person",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/person/02ca6d8d-a96e-4890-a113-5f145acd45b1",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"person",
+								"02ca6d8d-a96e-4890-a113-5f145acd45b1"
 							]
 						}
 					},
