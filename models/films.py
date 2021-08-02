@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 from models.base import BaseModel
 from models.constants import FilmWorkTypeEnum
@@ -11,10 +11,10 @@ class Film(BaseModel):
     description: str
     type: FilmWorkTypeEnum = FilmWorkTypeEnum.movie
     creation_date: date
-    genres: List[str] = []
+    genres: Optional[List[str]] = []
     rating: float = 0.0
-    directors: List[str] = []
-    actors: List[str] = []
-    writers: List[str] = []
-    producers: List[str] = []
+    directors: Optional[List[str]] = []
+    actors: Optional[List[str]] = []
+    writers: Optional[List[str]] = []
+    producers: Optional[List[str]] = []
 

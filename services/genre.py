@@ -6,11 +6,12 @@ from aioredis import Redis
 from elasticsearch import AsyncElasticsearch, exceptions
 from fastapi import Depends
 
+from core.config import SAMPLE_SIZE
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.genres import Genre
 
-FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
+GENRE_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # Выставляем время жизни кеша — 5 минут
 
 
 class GenreService:
@@ -56,19 +57,20 @@ class GenreService:
         # Выставляем время жизни кеша — 5 минут
         # https://redis.io/commands/set
         # pydantic позволяет сериализовать модель в json
-        await self.redis.set(str(genre.id), genre.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+        await self.redis.set(str(genre.id), genre.json(), expire=GENRE_CACHE_EXPIRE_IN_SECONDS)
 
     async def _get_all(self) -> List[Genre]:
         data = await self.elastic.search(
             index='genres',
             body={"query": {"match_all": {}}},
+            size = SAMPLE_SIZE
         )
         out = []
         for doc in data.get('hits').get('hits'):
             out.append(
                 Genre(
                     id=doc.get('_id'),
-                    name = doc['_source'].get('name'),
+                    **doc['_source'],
                 )
             )
         return out

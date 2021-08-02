@@ -23,13 +23,7 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
         # Если жанр не найден, отдаём 404 статус
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genre not found')
 
-    # Перекладываем данные из models.genre в genre
-    # Обратите внимание, что у модели бизнес-логики есть поле description
-        # Которое отсутствует в модели ответа API.
-        # Если бы использовалась общая модель для бизнес-логики и формирования ответов API
-        # вы бы предоставляли клиентам данные, которые им не нужны
-        # и, возможно, данные, которые опасно возвращать
-    return Genre(id=genre.id, name=genre.name)
+    return genre
 
 
 @router.get('', response_model=Page[Genre])
