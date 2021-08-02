@@ -13,9 +13,9 @@ class Film(BaseModel):
     type: FilmWorkTypeEnum = FilmWorkTypeEnum.movie
     creation_date: date
     rating: float = 0.0
-    genres: Optional[List[str]] = []
-    directors: Optional[List[str]] = []
-    actors: Optional[List[str]] = []
-    writers: Optional[List[str]] = []
-    producers: Optional[List[str]] = []
+    genres: Optional[List[str]] = [] # Список названий жанров
+    directors: Optional[List[str]] = [] # Список имен режиссеров
+    actors: Optional[List[str]] = [] # Список названий актёров
+    writers: Optional[List[str]] = [] # Список названий сценаристов
+    producers: Optional[List[str]] = [] # Список названий продюсеров
 
