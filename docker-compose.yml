@@ -13,7 +13,7 @@ services:
     networks:
       - movie_net
     volumes:
-      - es_data:/data
+      - es_data:/usr/share/elasticsearch/data
 
   redis:
     image: redis:alpine

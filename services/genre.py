@@ -1,8 +1,9 @@
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, List
+from uuid import UUID
 
 from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
+from elasticsearch import AsyncElasticsearch, exceptions
 from fastapi import Depends
 
 from db.elastic import get_elastic
@@ -18,7 +19,7 @@ class GenreService:
         self.elastic = elastic
 
     # get_by_id возвращает объект фильма. Он опционален, так как фильм может отсутствовать в базе
-    async def get_by_id(self, genre_id: str) -> Optional[Genre]:
+    async def get_by_id(self, genre_id: UUID) -> Optional[Genre]:
         # Пытаемся получить данные из кеша, потому что оно работает быстрее
         genre = await self._genre_from_cache(genre_id)
         if not genre:
@@ -32,14 +33,17 @@ class GenreService:
 
         return genre
 
-    async def _get_genre_from_elastic(self, genre_id: str) -> Optional[Genre]:
-        doc = await self.elastic.get('genres', genre_id)
+    async def _get_genre_from_elastic(self, genre_id: UUID) -> Optional[Genre]:
+        try:
+            doc = await self.elastic.get('genres', genre_id)
+        except exceptions.NotFoundError:
+            return None
         return Genre(id=genre_id, name=doc['_source']['name'])
 
-    async def _genre_from_cache(self, genre_id: str) -> Optional[Genre]:
+    async def _genre_from_cache(self, genre_id: UUID) -> Optional[Genre]:
         # Пытаемся получить данные о фильме из кеша, используя команду get
         # https://redis.io/commands/get
-        data = await self.redis.get(genre_id)
+        data = await self.redis.get(str(genre_id))
         if not data:
             return None
 
@@ -53,6 +57,21 @@ class GenreService:
         # https://redis.io/commands/set
         # pydantic позволяет сериализовать модель в json
         await self.redis.set(str(genre.id), genre.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+
+    async def _get_all(self) -> List[Genre]:
+        data = await self.elastic.search(
+            index='genres',
+            body={"query": {"match_all": {}}},
+        )
+        out = []
+        for doc in data.get('hits').get('hits'):
+            out.append(
+                Genre(
+                    id=doc.get('_id'),
+                    name = doc['_source'].get('name'),
+                )
+            )
+        return out
 
 
 @lru_cache()

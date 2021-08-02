@@ -19,17 +19,6 @@ class Film(BaseModel):
     type: str
 
 
-@router.get('/all', response_model=List[Film])
-async def movies_list(film_service: FilmService = Depends(get_film_service)) -> List[Film]:
-    """
-    Предоставляет информацию о всех фильмах
-    """
-    films = await film_service._get_all()
-    return films
-    # return paginate(films)
-    # raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='films not found')
-
-
 # Внедряем FilmService с помощью Depends(get_film_service)
 @router.get('/{film_id}', response_model=Film)
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
@@ -50,5 +39,15 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
         # Если бы использовалась общая модель для бизнес-логики и формирования ответов API
         # вы бы предоставляли клиентам данные, которые им не нужны
         # и, возможно, данные, которые опасно возвращать
-    out = json.loads(film.json())
-    return Film(**out)
+    return film
+
+
+@router.get('', response_model=Page[Film])
+async def movies_list(film_service: FilmService = Depends(get_film_service)) -> List[Film]:
+    """
+    Предоставляет информацию о всех фильмах
+    """
+    films = await film_service._get_all()
+    return paginate(films)
+
+add_pagination(router)

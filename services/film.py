@@ -1,13 +1,10 @@
 from functools import lru_cache
 from typing import Optional, List
 from uuid import UUID
-from datetime import datetime
-import json
 
 from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
+from elasticsearch import AsyncElasticsearch, exceptions
 from fastapi import Depends
-from pydantic.types import Json
 
 from db.elastic import get_elastic
 from db.redis import get_redis
@@ -37,14 +34,13 @@ class FilmService:
         return film
 
     async def _get_film_from_elastic(self, film_id: UUID) -> Optional[Film]:
-        doc = await self.elastic.get('movies', film_id)
+        try:
+            doc = await self.elastic.get('movies', film_id)
+        except exceptions.NotFoundError:
+            return None
         return Film(
-            id=doc.get('_id'),
-            title = doc['_source'].get('title'),
-            description = doc['_source'].get('description'),
-            type = doc['_source'].get('type'),
-            creation_date = datetime.strptime(doc['_source'].get('creation_date'), '%Y-%m-%d'),
-            # **doc['_source'],
+            id=doc['_id'],
+            **doc['_source'],
         )
 
     async def _film_from_cache(self, film_id: UUID) -> Optional[Film]:
@@ -70,18 +66,13 @@ class FilmService:
         data = await self.elastic.search(
             index='movies',
             body={"query": {"match_all": {}}},
-            size=3
         )
         out = []
         for doc in data.get('hits').get('hits'):
             out.append(
                 Film(
                     id=doc.get('_id'),
-                    title = doc['_source'].get('title'),
-                    description = doc['_source'].get('description'),
-                    type = doc['_source'].get('type'),
-                    creation_date = datetime.strptime(doc['_source'].get('creation_date'), '%Y-%m-%d'),
-                    # **doc['_source'],
+                    **doc['_source'],
                 )
             )
         return out

@@ -10,7 +10,6 @@ class ProjectSettings(BaseModel):
     name: str
     host: str
     port: int
-    per_page: int
 
 
 class RedisSettings(BaseModel):
@@ -37,7 +36,6 @@ config = Config.parse_file('config.json')
 PROJECT_NAME = config.movie_api.name  # Название проекта. Используется в Swagger-документации
 PROJECT_HOST = config.movie_api.host
 PROJECT_PORT = config.movie_api.port
-PER_PAGE = config.movie_api.per_page
 
 # Настройки Redis
 REDIS_HOST = config.redis.host
