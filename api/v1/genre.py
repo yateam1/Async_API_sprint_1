@@ -5,13 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi_pagination import Page, add_pagination, paginate
 from pydantic import BaseModel
 
+from models import Genre
 from services.genre import GenreService, get_genre_service
 
 router = APIRouter()
-
-
-class Genre(BaseModel):
-    name: str
 
 
 # Внедряем GenreService с помощью Depends(get_genre_service)

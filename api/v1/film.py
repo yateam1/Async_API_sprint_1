@@ -7,16 +7,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi_pagination import Page, add_pagination, paginate
 from pydantic import BaseModel
 
+from models import Film
 from services.film import FilmService, get_film_service
 
 router = APIRouter()
-
-
-class Film(BaseModel):
-    # id: str
-    title: str
-    description: str
-    type: str
 
 
 # Внедряем FilmService с помощью Depends(get_film_service)
