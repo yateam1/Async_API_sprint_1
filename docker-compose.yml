@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.3'
 
 services:
 
@@ -40,7 +40,7 @@ services:
     networks:
       - movie_net
     ports:
-      - 5432:5432
+      - 5430:5432
     volumes:
       - db-data-4:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -97,7 +97,7 @@ services:
     networks:
       - movie_net
     ports:
-      - 8000:8000
+      - 8001:8000
     depends_on:
       - redis
       - elasticsearch
@@ -114,5 +114,5 @@ volumes:
 
 networks:
   movie_net:
-    name: movie_net
+    # name: movie_net
     driver: bridge
