@@ -35,7 +35,7 @@ async def genres_list(request: Request, genre_service: GenreService = Depends(ge
     - name: str
     """
     search_params = get_params(request)
-    genres = await genre_service._get_all(search_params)
+    genres = await genre_service.get_all(search_params)
     return paginate(genres)
 
 

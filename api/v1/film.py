@@ -35,7 +35,7 @@ async def movies_list(request: Request, film_service: FilmService = Depends(get_
     """
     # Формируем из параметров запроса словарь.
     search_params = get_params(request)
-    films = await film_service._get_all(search_params)
+    films = await film_service.get_all(search_params)
     return paginate(films)
 
 add_pagination(router)

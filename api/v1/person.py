@@ -35,7 +35,7 @@ async def persons_list(request: Request, person_service: PersonService = Depends
     - last_name: str
     """
     search_params = get_params(request)
-    persons = await person_service._get_all(search_params)
+    persons = await person_service.get_all(search_params)
     return paginate(persons)
 
 

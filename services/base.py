@@ -50,13 +50,13 @@ class ItemService:
     async def _put_item_to_cache(self, item: Union[Film, Person, Genre]):
         await self.redis.set(str(item.id), item.json(), expire=ITEM_CACHE_EXPIRE_IN_SECONDS)
 
-    async def _get_all(self, search_params: Optional[dict]) -> Union[List[Film], List[Person], List[Genre]]:
+    async def get_all(self, search_params: Optional[dict]) -> Union[List[Film], List[Person], List[Genre]]:
         body = defaultdict(lambda: defaultdict(dict))
         if search_params:
             body['query']['bool']['should'] = []
-            for param in search_params:
+            for k, v in search_params.items():
                 match_exp = defaultdict(lambda: defaultdict(dict))
-                match_exp['match'][param] = search_params[param]
+                match_exp['match'][k] = v
                 body['query']['bool']['should'].append(match_exp)
         else:
             body['query']['match_all'] = {}

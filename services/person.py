@@ -15,11 +15,13 @@ from services.base import ItemService
 class PersonService(ItemService):
     async def _get_item_from_elastic(self, item_id: UUID) -> Optional[Person]:
         doc = await super()._get_item_from_elastic(item_id)
+        if not doc:
+            return None
         return Person(
             id=doc['_id'],
             **doc['_source'],
         )
-    
+
     async def _item_from_cache(self, item_id: UUID) -> Optional[Person]:
         data = await super()._item_from_cache(item_id)
         # pydantic предоставляет удобное API для создания объекта моделей из json
