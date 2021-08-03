@@ -6,6 +6,7 @@ from fastapi_pagination import Page, add_pagination, paginate
 
 from models import Person
 from services.person import PersonService, get_person_service
+from utils.url_misc import get_params
 
 router = APIRouter()
 
@@ -30,10 +31,7 @@ async def persons_list(request: Request, person_service: PersonService = Depends
     """
     Предоставляет информацию о всех персонах
     """
-    # Формируем из параметров запроса словарь.
-    search_params = dict(request.query_params.multi_items()) if request.query_params else None
-    if search_params:
-        search_params.pop('page', None) # Удаляем параметр пагинации page
+    search_params = get_params(request)
     persons = await person_service._get_all(search_params)
     return paginate(persons)
 

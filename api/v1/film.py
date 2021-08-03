@@ -6,6 +6,7 @@ from fastapi_pagination import Page, add_pagination, paginate
 
 from models import Film
 from services.film import FilmService, get_film_service
+from utils.url_misc import get_params
 
 router = APIRouter()
 
@@ -31,9 +32,7 @@ async def movies_list(request: Request, film_service: FilmService = Depends(get_
     Можно указать параметр нечеткого поиска search=текст
     """
     # Формируем из параметров запроса словарь.
-    search_params = dict(request.query_params.multi_items()) if request.query_params else None
-    if search_params:
-        search_params.pop('page', None) # Удаляем параметр пагинации page
+    search_params = get_params(request)
     films = await film_service._get_all(search_params)
     return paginate(films)
 

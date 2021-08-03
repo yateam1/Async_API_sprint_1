@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from models import Genre
 from services.genre import GenreService, get_genre_service
+from utils.url_misc import get_params
 
 router = APIRouter()
 
@@ -31,10 +32,7 @@ async def genres_list(request: Request, genre_service: GenreService = Depends(ge
     """
     Предоставляет информацию о всех жанрах
     """
-    # Формируем из параметров запроса словарь.
-    search_params = dict(request.query_params.multi_items()) if request.query_params else None
-    if search_params:
-        search_params.pop('page', None) # Удаляем параметр пагинации page
+    search_params = get_params(request)
     genres = await genre_service._get_all(search_params)
     return paginate(genres)
 
