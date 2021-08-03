@@ -31,6 +31,8 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 async def genres_list(request: Request, genre_service: GenreService = Depends(get_genre_service)) -> List[Genre]:
     """
     Предоставляет информацию о всех жанрах
+    Можно указать параметры запроса (имя жанра):
+    - name: str
     """
     search_params = get_params(request)
     genres = await genre_service._get_all(search_params)

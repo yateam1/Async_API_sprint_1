@@ -29,7 +29,9 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
 async def movies_list(request: Request, film_service: FilmService = Depends(get_film_service)) -> List[Film]:
     """
     Предоставляет информацию о всех фильмах
-    Можно указать параметр нечеткого поиска search=текст
+    Можно указать параметры поиска:
+    - title: str
+    - description: str
     """
     # Формируем из параметров запроса словарь.
     search_params = get_params(request)
