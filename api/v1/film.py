@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page, add_pagination, paginate
 
 from models import Film
@@ -25,11 +25,16 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
 
 
 @router.get('', response_model=Page[Film])
-async def movies_list(film_service: FilmService = Depends(get_film_service)) -> List[Film]:
+async def movies_list(request: Request, film_service: FilmService = Depends(get_film_service)) -> List[Film]:
     """
     Предоставляет информацию о всех фильмах
+    Можно указать параметр нечеткого поиска search=текст
     """
-    films = await film_service._get_all()
+    # Формируем из параметров запроса словарь.
+    search_params = dict(request.query_params.multi_items()) if request.query_params else None
+    if search_params:
+        search_params.pop('page', None) # Удаляем параметр пагинации page
+    films = await film_service._get_all(search_params)
     return paginate(films)
 
 add_pagination(router)

@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page, add_pagination, paginate
 
 from models import Person
@@ -26,11 +26,15 @@ async def person_details(person_id: str, person_service: PersonService = Depends
 
 
 @router.get('', response_model=Page[Person])
-async def persons_list(person_service: PersonService = Depends(get_person_service)) -> List[Person]:
+async def persons_list(request: Request, person_service: PersonService = Depends(get_person_service)) -> List[Person]:
     """
     Предоставляет информацию о всех персонах
     """
-    persons = await person_service._get_all()
+    # Формируем из параметров запроса словарь.
+    search_params = dict(request.query_params.multi_items()) if request.query_params else None
+    if search_params:
+        search_params.pop('page', None) # Удаляем параметр пагинации page
+    persons = await person_service._get_all(search_params)
     return paginate(persons)
 
 

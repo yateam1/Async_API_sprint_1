@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page, add_pagination, paginate
 from pydantic import BaseModel
 
@@ -27,11 +27,15 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 
 
 @router.get('', response_model=Page[Genre])
-async def genres_list(genre_service: GenreService = Depends(get_genre_service)) -> List[Genre]:
+async def genres_list(request: Request, genre_service: GenreService = Depends(get_genre_service)) -> List[Genre]:
     """
     Предоставляет информацию о всех жанрах
     """
-    genres = await genre_service._get_all()
+    # Формируем из параметров запроса словарь.
+    search_params = dict(request.query_params.multi_items()) if request.query_params else None
+    if search_params:
+        search_params.pop('page', None) # Удаляем параметр пагинации page
+    genres = await genre_service._get_all(search_params)
     return paginate(genres)
 
 
