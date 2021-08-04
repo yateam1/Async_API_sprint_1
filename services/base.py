@@ -60,7 +60,7 @@ class ItemService:
                 body['query']['bool']['should'].append(match_exp)
         else:
             body['query']['match_all'] = {}
-        body['stored_fields'] = []
+        body['stored_fields'] = ['_id']
         data = await self.elastic.search(
             index=self.index,
             body=body,
