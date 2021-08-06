@@ -8,10 +8,6 @@ services:
     environment:
       - discovery.type=single-node
     restart: always
-    ports:
-      - 9200:9200
-    networks:
-      - movie_net
     volumes:
       - es_data:/usr/share/elasticsearch/data
 
@@ -19,10 +15,6 @@ services:
     image: redis:alpine
     volumes:
       - redis_data:/data
-    ports:
-      - 6379:6379
-    networks:
-      - movie_net
     depends_on:
       - elasticsearch
 
@@ -36,10 +28,6 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: $POSTGRES_DB
     restart: always
-    networks:
-      - movie_net
-    ports:
-      - 5430:5432
     volumes:
       - db-data-4:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -49,8 +37,8 @@ services:
     env_file:
       - .env
     restart: always
-    networks:
-      - movie_net
+    links:
+      - db
     volumes:
       - ./config.json:/usr/src/app/config.json
       - django-static:/usr/src/app/static
@@ -61,8 +49,9 @@ services:
     container_name: nginx
     image: nginx:1.19.2
     restart: always
-    networks:
-      - movie_net
+    links:
+      - admin_panel
+      - movie_api
     depends_on:
       - db
       - admin_panel
@@ -79,8 +68,10 @@ services:
     env_file:
       - .env
     restart: always
-    networks:
-      - movie_net
+    links:
+      - redis
+      - elasticsearch
+      - db
     volumes:
       - ./config.json:/usr/src/postgres_to_es/config.json
     depends_on:
@@ -93,10 +84,9 @@ services:
     build:
       context: .
     restart: always
-    networks:
-      - movie_net
-    ports:
-      - 8001:8000
+    links:
+      - redis
+      - elasticsearch
     depends_on:
       - redis
       - elasticsearch
@@ -110,8 +100,3 @@ volumes:
   redis_data:
   db-data-4:
   django-static:
-
-networks:
-  movie_net:
-    # name: movie_net
-    driver: bridge
