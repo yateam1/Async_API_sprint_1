@@ -1,9 +1,0 @@
-version: '3.3'
-
-services:
-  movie_api:
-    <<: &movie_api
-      image: "ghcr.io/s-klimov/async_api_sprint_1:main"
-      build:
-        args:
-          ENV: production

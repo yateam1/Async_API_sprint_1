@@ -28,14 +28,19 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
 @router.get('', response_model=Page[Film])
 async def movies_list(request: Request, film_service: FilmService = Depends(get_film_service)) -> List[Film]:
     """
-    Предоставляет информацию о всех фильмах
-    Можно указать параметры поиска:
-    - title: str
-    - description: str
+    Предоставляет информацию о фильмах
+    Параметры поиска:
+    - from: int начиная с какого элемента начинаем показ выдачи
+    - size: int количество элементов в выдаче
+    - query: str поисковая строка
     """
     # Формируем из параметров запроса словарь.
-    search_params = get_params(request)
-    films = await film_service.get_all(search_params)
+    search_params = dict(request.query_params.multi_items())
+    
+    # Формируем перечень полей, в которых будет происхождитть поиск, с весами
+    search_fields = {'title': 5, 'actors': 3, 'description': 1}
+    
+    films = await film_service.get_all(search_params=search_params, search_fields=search_fields)
     return paginate(films)
 
 add_pagination(router)

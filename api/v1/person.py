@@ -30,12 +30,17 @@ async def person_details(person_id: str, person_service: PersonService = Depends
 async def persons_list(request: Request, person_service: PersonService = Depends(get_person_service)) -> List[Person]:
     """
     Предоставляет информацию о всех персонах
-    Можно указать параметры поиска:
-    - first_name: str
-    - last_name: str
+    Параметры поиска:
+    - from: int начиная с какого элемента начинаем показ выдачи
+    - size: int количество элементов в выдаче
+    - query: str поисковая строка
     """
-    search_params = get_params(request)
-    persons = await person_service.get_all(search_params)
+    # Формируем из параметров запроса словарь.
+    search_params = dict(request.query_params.multi_items())
+    
+    # Формируем перечень полей, в которых будет происхождитть поиск, с весами
+    search_fields = {'last_name': 5, 'first_name': 3}
+    persons = await person_service.get_all(search_params=search_params, search_fields=search_fields)
     return paginate(persons)
 
 
