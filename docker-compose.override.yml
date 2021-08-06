@@ -14,7 +14,7 @@ services:
     ports:
       - 5430:5432
 
-   movie_api:
+  movie_api:
      ports:
        - 8001:8000
      volumes:

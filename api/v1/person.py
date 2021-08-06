@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import List
+from fastapi_cache.decorator import cache
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page, add_pagination, paginate
@@ -13,6 +14,7 @@ router = APIRouter()
 
 # Внедряем PersonService с помощью Depends(get_person_service)
 @router.get('/{person_id}', response_model=Person)
+@cache(expire=3600)
 async def person_details(person_id: str, person_service: PersonService = Depends(get_person_service)) -> Person:
     """
     Предоставляет информацию о персоне по её id
@@ -27,6 +29,7 @@ async def person_details(person_id: str, person_service: PersonService = Depends
 
 
 @router.get('', response_model=Page[Person])
+@cache(expire=3600)
 async def persons_list(request: Request, person_service: PersonService = Depends(get_person_service)) -> List[Person]:
     """
     Предоставляет информацию о всех персонах
