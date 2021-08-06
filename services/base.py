@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from http import HTTPStatus
 from typing import Optional, Union
 from uuid import UUID
 
-from pydantic import parse_obj_as
 from elasticsearch import AsyncElasticsearch, exceptions
+from fastapi import HTTPException
+from pydantic import parse_obj_as, error_wrappers
 
-from core.config import SAMPLE_SIZE
 from models import Film, Person, Genre
+from services.api_params import APIParams
 
 
 class ItemService(ABC):
@@ -32,20 +34,38 @@ class ItemService(ABC):
             return
         return self.model(id=doc['_id'], **doc['_source'])
 
-    async def get_all(self, search_params: Optional[dict]) -> Union[list[Film], list[Person], list[Genre]]:
+    async def get_all(self, search_params: Optional[dict],
+                      search_fields: Optional[dict]) -> Union[list[Film], list[Person], list[Genre]]:
+        """
+        Получение записей по поисковой строке
+        """
+
+        try:
+            search_params = APIParams(**search_params)
+        except error_wrappers.ValidationError as err:
+            raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=err)
+        from_ = search_params.from_
+        size_ = search_params.size_
+        query_ = search_params.query_
         body = defaultdict(lambda: defaultdict(dict))
-        if search_params:
-            body['query']['bool']['should'] = []
-            for k, v in search_params.items():
-                match_exp = defaultdict(lambda: defaultdict(dict))
-                match_exp['match'][k] = v
-                body['query']['bool']['should'].append(match_exp)
+        body['from'] = from_
+        body['size'] = size_
+
+        if query_:
+            for field, weight in search_fields.items():
+                body['search_fields'][k]['weight'] = weight
+            body['query'] = query_
+
         else:
             body['query']['match_all'] = {}
-        body['stored_fields'] = ['_id']
+
         data = await self.elastic.search(
             index=self.elastic_index_name,
-            body=body,
-            size=SAMPLE_SIZE
+            body=body
         )
-        return parse_obj_as(list[self.model], data.get('hits', {}).get('hits', []))
+        items = map(
+            lambda item: {'id': item['_id'], **item['_source']},
+            data.get('hits', {}).get('hits', [])
+        )
+        
+        return parse_obj_as(list[self.model], list(items))
