@@ -3,7 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi_pagination import Page, add_pagination, paginate
-from pydantic import BaseModel
+from fastapi_cache.decorator import cache
 
 from models import Genre
 from services.genre import GenreService, get_genre_service
@@ -14,6 +14,7 @@ router = APIRouter()
 
 # Внедряем GenreService с помощью Depends(get_genre_service)
 @router.get('/{genre_id}', response_model=Genre)
+@cache(expire=3600)
 async def genre_details(genre_id: str, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
     """
     Предоставляет информацию о жанре по его id
@@ -28,6 +29,7 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 
 
 @router.get('', response_model=Page[Genre])
+@cache(expire=3600)
 async def genres_list(request: Request, genre_service: GenreService = Depends(get_genre_service)) -> List[Genre]:
     """
     Предоставляет информацию о всех жанрах

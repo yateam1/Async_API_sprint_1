@@ -5,7 +5,9 @@ import uvicorn as uvicorn
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from fastapi_pagination import Page, add_pagination, paginate
+from fastapi_pagination import add_pagination
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 
 from api.v1 import film, genre, person
 from core import config
@@ -27,6 +29,7 @@ add_pagination(app)
 async def startup():
     redis.redis = await aioredis.create_redis_pool((config.REDIS_HOST, config.REDIS_PORT), minsize=10, maxsize=20)
     elastic.es = AsyncElasticsearch(hosts=[f'{config.ELASTIC_HOST}:{config.ELASTIC_PORT}'])
+    FastAPICache.init(RedisBackend(redis.redis), prefix="cache")
 
 
 @app.on_event('shutdown')
