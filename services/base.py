@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Optional, List, Union
+from typing import Optional, Union
 from uuid import UUID
 
+from pydantic import parse_obj_as
 from elasticsearch import AsyncElasticsearch, exceptions
 
 from core.config import SAMPLE_SIZE
@@ -31,7 +32,7 @@ class ItemService(ABC):
             return
         return self.model(id=doc['_id'], **doc['_source'])
 
-    async def get_all(self, search_params: Optional[dict]) -> List[Union[Film, Person, Genre]]:
+    async def get_all(self, search_params: Optional[dict]) -> Union[list[Film], list[Person], list[Genre]]:
         body = defaultdict(lambda: defaultdict(dict))
         if search_params:
             body['query']['bool']['should'] = []
@@ -41,10 +42,10 @@ class ItemService(ABC):
                 body['query']['bool']['should'].append(match_exp)
         else:
             body['query']['match_all'] = {}
-        body['stored_fields'] = {}
+        body['stored_fields'] = ['_id']
         data = await self.elastic.search(
             index=self.elastic_index_name,
             body=body,
             size=SAMPLE_SIZE
         )
-        return data.get('hits', {}).get('hits', [])
+        return parse_obj_as(list[self.model], data.get('hits', {}).get('hits', []))
