@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+
+  elasticsearch:
+    ports:
+      - 9200:9200
+
+  redis:
+    ports:
+      - 6379:6379
+
+  db:
+    ports:
+      - 5430:5432
+
+   movie_api:
+     ports:
+       - 8001:8000
+     volumes:
+       - .:/usr/src/app/
