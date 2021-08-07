@@ -53,7 +53,7 @@ class ItemService(ABC):
 
         if query_:
             for field, weight in search_fields.items():
-                body['search_fields'][k]['weight'] = weight
+                body['search_fields'][field]['weight'] = weight
             body['query'] = query_
 
         else:
