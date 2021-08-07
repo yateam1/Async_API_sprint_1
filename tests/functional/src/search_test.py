@@ -56,14 +56,22 @@ async def test_search_detailed(es_client, make_get_request):
     await es_client.bulk(body=json.dumps(BODY_STRING))
 
     # Выполнение запроса
-    response = await make_get_request('/films/fc258fa6-886f-4997-a498-556a8f208ac2')
+    response = await make_get_request('/films?genre=Genre 1')
 
     # Проверка результата
     assert response.status == 200
     assert response.body['id'] == 'fc258fa6-886f-4997-a498-556a8f208ac2'
 
-    response = await make_get_request('/films')
+    # Выполнение запроса
+    response = await make_get_request('/films?genre=Genre 1&person=Person 1')
 
     # Проверка результата
     assert response.status == 200
-    assert response.body['total'] == 95
+    assert response.body['id'] == 'fc258fa6-886f-4997-a498-556a8f208ac2'
+
+    # Выполнение запроса
+    response = await make_get_request('/films?size=50')
+
+    # Проверка результата
+    assert response.status == 200
+    assert response.body['total'] == 50
