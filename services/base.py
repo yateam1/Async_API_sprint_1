@@ -6,7 +6,7 @@ from uuid import UUID
 
 from elasticsearch import AsyncElasticsearch, exceptions
 from fastapi import HTTPException
-from pydantic import parse_obj_as, error_wrappers
+from pydantic import parse_obj_as, ValidationError
 
 from models import Film, Person, Genre
 from services.api_params import APIParams
@@ -42,8 +42,8 @@ class ItemService(ABC):
 
         try:
             search_params = APIParams(**search_params)
-        except error_wrappers.ValidationError as err:
-            raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=err)
+        except ValidationError as err:
+            raise HTTPException(status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail=err)
         from_ = search_params.from_
         size_ = search_params.size_
         query_ = search_params.query_
