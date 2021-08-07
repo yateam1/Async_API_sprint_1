@@ -10,12 +10,19 @@
 - POSTGRES_PASSWORD=<укажите ваш пароль>
 
 ### Команды для запуска приложений:
+Для запуска в режиме разработки
 ```bash
 docker-compose build
 ```
 ```bash
 docker-compose up -d
 ```
+
+Для запуска в production
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+```
+
 
 ### Заполнение базы данных фикстурами
 1. С помощью команды ```docker ps``` узнайте имя контейнера c приложением admin_panel

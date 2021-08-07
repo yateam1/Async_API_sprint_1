@@ -52,9 +52,13 @@ class ItemService(ABC):
         body['size'] = size_
 
         if query_:
+            
+            body['query']['bool']['should'] = []
             for field, weight in search_fields.items():
-                body['search_fields'][field]['weight'] = weight
-            body['query'] = query_
+                match = defaultdict(lambda: defaultdict(dict))
+                match['match'][field]['query'] = query_
+                match['match'][field]['boost'] = weight
+                body['query']['bool']['should'].append(match)
 
         else:
             body['query']['match_all'] = {}
