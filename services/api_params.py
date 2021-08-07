@@ -14,3 +14,6 @@ class APIParams(BaseModel):
         arbitrary_types_allowed = True
         json_loads = orjson.loads
         json_dumps = orjson_dumps
+        
+        extra = 'forbid'
+        
