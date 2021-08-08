@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import List, Optional
 from fastapi_cache.decorator import cache
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_pagination import Page, add_pagination, paginate
 
 from models import Person
@@ -19,7 +19,7 @@ async def person_details(person_id: str, person_service: PersonService = Depends
     Предоставляет информацию о персоне по её id
     :param person_id:
     """
-    person= await person_service.get_by_id(person_id)
+    person = await person_service.get_by_id(person_id)
     if not person:
         # Если жанр не найден, отдаём 404 статус
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='person not found')

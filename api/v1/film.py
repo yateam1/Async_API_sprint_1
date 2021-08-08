@@ -1,7 +1,8 @@
 from http import HTTPStatus
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Query
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_pagination import Page, add_pagination, paginate
 from fastapi_cache.decorator import cache
 

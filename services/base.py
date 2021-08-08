@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import Optional, Union
 from uuid import UUID
 
+import backoff
 from elasticsearch import AsyncElasticsearch, exceptions
 from pydantic import parse_obj_as
 
@@ -24,6 +25,9 @@ class ItemService(ABC):
     def model(*args, **kwargs) -> Union[Film, Person, Genre]:
         pass
 
+    @backoff.on_exception(backoff.expo,
+                          (exceptions.ConnectionError, ),
+                          max_time=10)
     async def get_by_id(self, item_id: UUID) -> Optional[Union[Film, Person, Genre]]:
         try:
             doc = await self.elastic.get(self.elastic_index_name, item_id)
@@ -31,6 +35,9 @@ class ItemService(ABC):
             return
         return self.model(id=doc['_id'], **doc['_source'])
 
+    @backoff.on_exception(backoff.expo,
+                          (exceptions.ConnectionError, ),
+                          max_time=10)
     async def get_all(self, search_params: Optional[dict],
                       search_fields: Optional[dict]) -> Union[list[Film], list[Person], list[Genre]]:
         """
