@@ -22,7 +22,7 @@ class HTTPResponse:
 
 @pytest.fixture(scope='session')
 async def es_client():
-    client = AsyncElasticsearch(hosts='localhost:9200')
+    client = AsyncElasticsearch(hosts='elasticsearch:9200')
     yield client
     await client.close()
 

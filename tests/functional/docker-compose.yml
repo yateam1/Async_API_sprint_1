@@ -4,10 +4,16 @@ services:
 
   movie_test:
     container_name: movie_test
-    image: async_api_sprint_1_movie_api
     build:
       context: .
+    networks:
+      - test_net
     entrypoint: >
       sh -c "pytest src/"
     volumes:
       - .:/usr/src/tests/
+
+networks:
+  test_net:
+    external: true
+    name: movie_net

@@ -1,4 +1,4 @@
 from pydantic import BaseSettings, Field
 
 class TestSettings(BaseSettings):
-    es_host: str = Field('localhost:9200', env='ELASTIC_HOST')
+    es_host: str = Field('elasticsearch:9200', env='ELASTIC_HOST')

@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 services:
 
@@ -97,3 +97,4 @@ volumes:
 
 networks:
   movie_net:
+    name: movie_net
