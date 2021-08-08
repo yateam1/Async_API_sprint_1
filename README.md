@@ -23,6 +23,13 @@ docker-compose up -d
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
+Тестирование проекта
+```bash
+cd tests/functional
+docker-compose build
+docker-compose up
+```
+
 
 ### Заполнение базы данных фикстурами
 1. С помощью команды ```docker ps``` узнайте имя контейнера c приложением admin_panel
