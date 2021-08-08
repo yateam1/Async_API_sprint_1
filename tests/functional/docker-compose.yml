@@ -4,6 +4,7 @@ services:
 
   movie_test:
     container_name: movie_test
+    image: async_api_sprint_1_movie_api
     build:
       context: .
     entrypoint: >
