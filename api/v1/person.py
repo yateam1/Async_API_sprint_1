@@ -12,7 +12,13 @@ router = APIRouter()
 
 
 # Внедряем PersonService с помощью Depends(get_person_service)
-@router.get('/{person_id}', response_model=Person)
+@router.get('/{person_id}',
+            response_model=Person,
+            summary="Поиск людей",
+            description="Поиск человека, участвовашего в создании кинопроизведения, по его id(uuid)",
+            response_description="Cловарь атрибутов человека",
+            tags=['Поиск по id']
+            )
 @cache(expire=3600)
 async def person_details(person_id: str, person_service: PersonService = Depends(get_person_service)) -> Person:
     """
@@ -27,7 +33,12 @@ async def person_details(person_id: str, person_service: PersonService = Depends
     return person
 
 
-@router.get('', response_model=Page[Person])
+@router.get('',
+            response_model=Page[Person],
+            summary="Поиск людей",
+            description="Полнотекстовый поиск по людям, участвовашим в создании кинопроизведениий",
+            response_description="Список словарей атрибутов людей",
+            tags=['Полнотекстовый поиск'])
 @cache(expire=3600)
 async def persons_list(person_service: PersonService = Depends(get_person_service),
                        from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),

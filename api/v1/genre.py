@@ -12,7 +12,12 @@ router = APIRouter()
 
 
 # Внедряем GenreService с помощью Depends(get_genre_service)
-@router.get('/{genre_id}', response_model=Genre)
+@router.get('/{genre_id}',
+            response_model=Genre,
+            summary="Поиск жанра кинопроизведений",
+            description="Поиск жанра по его id(uuid)",
+            response_description="Cловарь атрибутов жанра",
+            tags=['Поиск по id'])
 @cache(expire=3600)
 async def genre_details(genre_id: str, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
     """
@@ -27,7 +32,12 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
     return genre
 
 
-@router.get('', response_model=Page[Genre])
+@router.get('',
+            response_model=Page[Genre],
+            summary="Поиск жанров кинопроизведений",
+            description="Полнотекстовый поиск по жанрам кинопроизведений",
+            response_description="Список словарей атрибутов жанров",
+            tags=['Полнотекстовый поиск'])
 @cache(expire=3600)
 async def genres_list(genre_service: GenreService = Depends(get_genre_service),
                       from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
