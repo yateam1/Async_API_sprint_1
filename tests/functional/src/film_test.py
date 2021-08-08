@@ -1,12 +1,10 @@
 import aiohttp
 import pytest
 import json
-import uuid
 
 from dataclasses import dataclass
 from multidict import CIMultiDictProxy
 from elasticsearch import AsyncElasticsearch
-import aioredis
 
 
 SERVICE_URL = 'http://127.0.0.1:8001'
@@ -67,4 +65,3 @@ async def test_search_detailed(es_client, make_get_request):
     # Проверка результата
     assert response.status == 200
     assert response.body['total'] == 95
-  

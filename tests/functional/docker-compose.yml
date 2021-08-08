@@ -6,6 +6,7 @@ services:
     container_name: movie_test
     build:
       context: .
-    restart: always
+    entrypoint: >
+      sh -c "pytest src/"
     volumes:
       - .:/usr/src/tests/

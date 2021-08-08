@@ -1,12 +1,10 @@
 import aiohttp
 import pytest
 import json
-import uuid
 
 from dataclasses import dataclass
 from multidict import CIMultiDictProxy
 from elasticsearch import AsyncElasticsearch
-import aioredis
 
 
 SERVICE_URL = 'http://127.0.0.1:8001'
