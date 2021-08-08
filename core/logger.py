@@ -39,6 +39,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',
         },
+        'backoff': {
+            'formatter': 'default',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
+        },
     },
     'loggers': {
         '': {
@@ -52,6 +57,9 @@ LOGGING = {
             'handlers': ['access'],
             'level': 'INFO',
             'propagate': False,
+        },
+        'backoff': {
+            'handlers': ['backoff'],
         },
     },
     'root': {
