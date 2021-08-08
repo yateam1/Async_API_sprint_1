@@ -12,7 +12,13 @@ from services.film import FilmService, get_film_service
 router = APIRouter()
 
 
-@router.get('/{film_id}', response_model=Film)
+@router.get('/{film_id}',
+            response_model=Film,
+            summary="Поиск кинопроизведения",
+            description="Поиск кинопроизведения по его id(uuid)",
+            response_description="Cловарь атрибутов фильма",
+            tags=['Поиск по id']
+            )
 @cache(expire=3600)
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
     """
@@ -26,7 +32,13 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
     return film
 
 
-@router.get('', response_model=Page[Film])
+@router.get('',
+            response_model=Page[Film],
+            summary="Поиск кинопроизведений",
+            description="Полнотекстовый поиск по кинопроизведениям",
+            response_description="Список словарей атрибутов фильмов",
+            tags=['Полнотекстовый поиск']
+            )
 @cache(expire=3600)
 async def movies_list(film_service: FilmService = Depends(get_film_service),
                       from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
