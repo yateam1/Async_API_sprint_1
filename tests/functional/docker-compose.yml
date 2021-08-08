@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+
+  movie_test:
+    container_name: movie_test
+    build:
+      context: .
+    restart: always
+    volumes:
+      - .:/usr/src/tests/

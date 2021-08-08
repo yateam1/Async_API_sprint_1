@@ -67,3 +67,4 @@ async def test_search_detailed(es_client, make_get_request):
     # Проверка результата
     assert response.status == 200
     assert response.body['total'] == 95
+  
