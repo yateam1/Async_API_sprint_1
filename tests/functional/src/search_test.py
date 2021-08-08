@@ -54,11 +54,11 @@ async def test_search_detailed(es_client, make_get_request):
     await es_client.bulk(body=json.dumps(BODY_STRING))
 
     # Выполнение запроса
-    response = await make_get_request('/films?genre=Genre 1')
+    response = await make_get_request('/genres?name=Genre 1')
 
     # Проверка результата
     assert response.status == 200
-    assert response.body['id'] == 'fc258fa6-886f-4997-a498-556a8f208ac2'
+    # assert response.body['id'] == 'fc258fa6-886f-4997-a498-556a8f208ac2'
 
     # Выполнение запроса
     response = await make_get_request('/films?query=Movie 2')
