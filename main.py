@@ -27,9 +27,9 @@ add_pagination(app)
 
 @app.on_event('startup')
 async def startup():
-    redis.redis = await aioredis.create_redis_pool((config.REDIS_HOST, config.REDIS_PORT), minsize=10, maxsize=20)
+    redis.redis = aioredis.from_url(f'redis://{config.REDIS_HOST}:{config.REDIS_PORT}', encoding="utf8", decode_responses=True)
     elastic.es = AsyncElasticsearch(hosts=[f'{config.ELASTIC_HOST}:{config.ELASTIC_PORT}'])
-    FastAPICache.init(RedisBackend(redis.redis), prefix="cache")
+    FastAPICache.init(RedisBackend(redis.redis), prefix="movie_api-cache")
 
 
 @app.on_event('shutdown')
