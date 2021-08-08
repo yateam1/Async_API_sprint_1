@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from http import HTTPStatus
 from typing import Optional, Union
 from uuid import UUID
 
 from elasticsearch import AsyncElasticsearch, exceptions
-from fastapi import HTTPException
-from pydantic import parse_obj_as, ValidationError
+from pydantic import parse_obj_as
 
 from models import Film, Person, Genre
-from services.api_params import APIParams
 
 
 class ItemService(ABC):
@@ -40,23 +37,16 @@ class ItemService(ABC):
         Получение записей по поисковой строке
         """
 
-        try:
-            search_params = APIParams(**search_params)
-        except ValidationError as err:
-            raise HTTPException(status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail=err)
-        from_ = search_params.from_
-        size_ = search_params.size_
-        query_ = search_params.query_
         body = defaultdict(lambda: defaultdict(dict))
-        body['from'] = from_
-        body['size'] = size_
+        body['from'] = search_params['from']
+        body['size'] = search_params['size']
 
-        if query_:
+        if search_params['query']:
             
             body['query']['bool']['should'] = []
             for field, weight in search_fields.items():
                 match = defaultdict(lambda: defaultdict(dict))
-                match['match'][field]['query'] = query_
+                match['match'][field]['query'] = search_params['query']
                 match['match'][field]['boost'] = weight
                 body['query']['bool']['should'].append(match)
 

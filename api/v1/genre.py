@@ -1,7 +1,7 @@
 from http import HTTPStatus
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from fastapi_pagination import Page, add_pagination, paginate
 from fastapi_cache.decorator import cache
 
@@ -29,7 +29,10 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 
 @router.get('', response_model=Page[Genre])
 @cache(expire=3600)
-async def genres_list(request: Request, genre_service: GenreService = Depends(get_genre_service)) -> List[Genre]:
+async def genres_list(request: Request, genre_service: GenreService = Depends(get_genre_service),
+                      from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
+                      size_: Optional[int] = Query(10, title='Пагинация "cколько"', alias='size'),
+                      query_: Optional[str] = Query(None, title='Поисковая строка', alias='query')) -> List[Genre]:
     """
     Параметры поиска:
     - from: int начиная с какого элемента начинаем показ выдачи
@@ -37,7 +40,7 @@ async def genres_list(request: Request, genre_service: GenreService = Depends(ge
     - query: str поисковая строка
     """
     # Формируем из параметров запроса словарь.
-    search_params = dict(request.query_params.multi_items())
+    search_params = {'from': from_, 'size': size_, 'query': query_}
 
     # Формируем перечень полей, в которых будет происхождитть поиск, с весами
     search_fields = {'name': 3}
