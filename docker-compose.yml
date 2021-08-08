@@ -35,6 +35,8 @@ services:
   admin_panel:
     image: "ghcr.io/s-klimov/admin_panel_sprint_2:main"
     container_name: admin_panel
+    env_file:
+      - .env
     restart: always
     networks:
       - movie_net
