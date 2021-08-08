@@ -27,8 +27,7 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
 
 @router.get('', response_model=Page[Film])
 @cache(expire=3600)
-async def movies_list(request: Request,
-                      film_service: FilmService = Depends(get_film_service),
+async def movies_list(film_service: FilmService = Depends(get_film_service),
                       from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
                       size_: Optional[int] = Query(10, title='Пагинация "cколько"', alias='size'),
                       query_: Optional[str] = Query(None, title='Поисковая строка', alias='query')) -> List[Film]:

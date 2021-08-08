@@ -29,10 +29,10 @@ async def person_details(person_id: str, person_service: PersonService = Depends
 
 @router.get('', response_model=Page[Person])
 @cache(expire=3600)
-async def persons_list(request: Request, person_service: PersonService = Depends(get_person_service),
-                      from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
-                      size_: Optional[int] = Query(10, title='Пагинация "cколько"', alias='size'),
-                      query_: Optional[str] = Query(None, title='Поисковая строка', alias='query')) -> List[Person]:
+async def persons_list(person_service: PersonService = Depends(get_person_service),
+                       from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
+                       size_: Optional[int] = Query(10, title='Пагинация "cколько"', alias='size'),
+                       query_: Optional[str] = Query(None, title='Поисковая строка', alias='query')) -> List[Person]:
     """
     Предоставляет информацию о всех персонах
     Параметры поиска:

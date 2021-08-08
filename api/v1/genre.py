@@ -29,7 +29,7 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
 
 @router.get('', response_model=Page[Genre])
 @cache(expire=3600)
-async def genres_list(request: Request, genre_service: GenreService = Depends(get_genre_service),
+async def genres_list(genre_service: GenreService = Depends(get_genre_service),
                       from_: Optional[int] = Query(0, title='Пагинация "c"', alias='from'),
                       size_: Optional[int] = Query(10, title='Пагинация "cколько"', alias='size'),
                       query_: Optional[str] = Query(None, title='Поисковая строка', alias='query')) -> List[Genre]:
