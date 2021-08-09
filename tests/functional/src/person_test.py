@@ -35,7 +35,6 @@ def make_get_request(session):
     return inner
 
 
-
 @pytest.mark.asyncio
 async def test_search_detailed(es_client, make_get_request):
     # Заполнение данных для теста
