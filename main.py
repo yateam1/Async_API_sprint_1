@@ -38,8 +38,6 @@ async def shutdown():
     await elastic.es.close()
 
 
-# Подключаем роутер к серверу, указав префикс /v1/film
-# Теги указываем для удобства навигации по документации
 app.include_router(film.router, prefix='/api/v1/films', tags=['films'])
 app.include_router(genre.router, prefix='/api/v1/genres', tags=['genres'])
 app.include_router(person.router, prefix='/api/v1/persons', tags=['persons'])
