@@ -38,7 +38,7 @@ def make_get_request(session):
 @pytest.mark.asyncio
 async def test_search_detailed(es_client, make_get_request):
     # Заполнение данных для теста
-    await es_client.bulk(body=json.dumps(query_body))
+    await es_client.bulk(body=query_body)
 
     # Выполнение запроса
     response = await make_get_request('/genres?name=Genre 1')
