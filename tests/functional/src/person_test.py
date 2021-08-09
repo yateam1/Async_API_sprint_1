@@ -5,6 +5,7 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 
 from ..settings import query_body, HTTPResponse, service_url, es_host
+from ..conftest import query_es_create_persons_documents
 
 
 @pytest.fixture(scope='session')
@@ -27,28 +28,35 @@ def make_get_request(session):
         params = params or {}
         url = service_url + '/api/v1' + method  # в боевых системах старайтесь так не делать!
         async with session.get(url, params=params) as response:
-          return HTTPResponse(
+            return HTTPResponse(
             body=await response.json(),
             headers=response.headers,
             status=response.status,
-          )
+            )
     return inner
 
 
 @pytest.mark.asyncio
 async def test_person_search(es_client, make_get_request):
     # Заполнение данных для теста
-    await es_client.bulk(body=query_body)
+    await es_client.bulk(body=query_es_create_persons_documents)
 
     # Выполнение запроса
-    response = await make_get_request('/persons/fc258fa6-886f-4997-a498-556a8f208ac2')
+    response = await make_get_request('/persons/unknown')
 
     # Проверка результата
-    assert response.status == 200
-    assert response.body['id'] == 'fc258fa6-886f-4997-a498-556a8f208ac2'
+    assert response.status == 404
 
+    # Выполнение запроса
     response = await make_get_request('/persons')
 
     # Проверка результата
     assert response.status == 200
-    assert response.body['total'] == 95
+    assert response.body['total'] > 0
+
+    # Выполнение запроса
+    # response = await make_get_request('/persons/ead9b449-734b-4878-86f1-1e4c96a28bb3')
+
+    # # Проверка результата
+    # assert response.status == 200
+    # assert response.body['total'] > 0

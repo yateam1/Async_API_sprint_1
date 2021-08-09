@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from multidict import CIMultiDictProxy
 from pydantic import BaseSettings, Field
 
-from .conftest import query_es_create_document
+from .conftest import query_es_create_films_documents
 
 
 @dataclass
@@ -19,7 +19,7 @@ class TestSettings(BaseSettings):
     query_body: str = Field(None, env='TEST_QUERY')
 
 
-test_settings = TestSettings(query_body=query_es_create_document)
+test_settings = TestSettings(query_body=query_es_create_films_documents)
 es_host = test_settings.es_host
 service_url = test_settings.service_url
 query_body = test_settings.query_body
