@@ -25,6 +25,8 @@ services:
   db:
     container_name: postgres
     image: postgres:13
+    env_file:
+      - .env
     restart: always
     networks:
       - movie_net
@@ -65,6 +67,10 @@ services:
   movie_etl:
     image: "ghcr.io/s-klimov/etl:main"
     container_name: movie_etl
+    env_file:
+      - .env
+    networks:
+      - movie_net
     restart: always
     volumes:
       - ./config.json:/usr/src/postgres_to_es/config.json
