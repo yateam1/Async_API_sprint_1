@@ -28,7 +28,7 @@ async def test_film_search(es_client, make_get_request):
     assert response.body['total'] > 0
 
     # Выполнение запроса
-    response = await make_get_request('/persons/ead9b449-734b-4878-86f1-1e4c96a28bb3')
+    response = await make_get_request('/films/ead9b449-734b-4878-86f1-1e4c96a28bb3')
 
     # Проверка результата
     assert response.status == 200
