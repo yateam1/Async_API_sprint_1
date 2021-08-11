@@ -15,7 +15,8 @@ class HTTPResponse:
 
 class TestSettings(BaseSettings):
     es_host: str = Field('elasticsearch:9200', env='ELASTIC_HOST')
-    service_url: str = Field('http://movie_api:8000', env='SERVICE_URL')
+    # service_url: str = Field('http://movie_api:8000', env='SERVICE_URL')
+    service_url: str = Field('http://127.0.0.1:8001', env='SERVICE_URL')
     query_body: str = Field(None, env='TEST_QUERY')
 
 
