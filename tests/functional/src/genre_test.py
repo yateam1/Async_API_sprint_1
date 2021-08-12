@@ -46,9 +46,7 @@ async def test_get_genre_data_by_id(make_get_request, validateGenresJSON):
 async def test_get_genre_data_by_unknown_id(make_get_request):
 
     response = await make_get_request('/genres/ead9b449-734b-4878-86f1-1e4c96a28bba', expected_status_code=404)
-
     assert response.body['detail'] == 'genre not found'
 
     response = await make_get_request('/genres/random_id', expected_status_code=404)
-
     assert response.body['detail'] == 'genre not found'

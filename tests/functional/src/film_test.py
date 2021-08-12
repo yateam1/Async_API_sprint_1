@@ -59,4 +59,5 @@ async def test_get_film_data_by_id(make_get_request, validateFilmsJSON):
 @pytest.mark.asyncio
 async def test_get_film_data_by_unknown_id(make_get_request):
 
-    await make_get_request('/films/ead9b449-734b-4878-86f1-1e4c96a28bba', expected_status_code=404)
+    response = await make_get_request('/films/ead9b449-734b-4878-86f1-1e4c96a28bba', expected_status_code=404)
+    assert response.body['detail'] == 'film not found'
