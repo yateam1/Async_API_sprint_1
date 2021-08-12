@@ -65,10 +65,11 @@ async def session():
 
 @pytest.fixture
 def make_get_request(session):
-    async def inner(method: str, params: dict = None) -> HTTPResponse:
+    async def inner(method: str, expected_status_code=200, params: dict = None) -> HTTPResponse:
         params = params or {}
         url = service_url + '/api/v1' + method
-        async with session.get(url, params=params)as response:
+        async with session.get(url, params=params) as response:
+            assert response.status == expected_status_code
             return HTTPResponse(
                 body=await response.json(),
                 headers=response.headers,
