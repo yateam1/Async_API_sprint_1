@@ -49,9 +49,9 @@ async def test_get_genre_data_by_unknown_id(event_loop, make_get_request):
     response = await make_get_request('/genres/ead9b449-734b-4878-86f1-1e4c96a28bba')
 
     assert response.status == 404
-    assert response.body['detail'] == 'genre not found'
+    assert response.body['detail'] == 'Not found'
 
     response = await make_get_request('/genres/random_id')
 
     assert response.status == 404
-    assert response.body['detail'] == 'genre not found'
+    assert response.body['detail'] == 'Not found'

@@ -7,7 +7,7 @@ async def test_get_film(event_loop, make_get_request):
     response = await make_get_request('/films/unknown')
 
     assert response.status == 404
-    assert response.body['detail'] == 'film not found'
+    assert response.body['detail'] == 'Not found'
 
 @pytest.mark.asyncio
 async def test_get_films_data(event_loop, make_get_request):
