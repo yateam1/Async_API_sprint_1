@@ -1,5 +1,9 @@
 import pytest
-from ..conftest import *
+from ..conftest import query_es_create_persons_documents
+
+@pytest.mark.asyncio
+async def test_make_persons_fixtures(es_client):
+    await es_client.bulk(body=query_es_create_persons_documents)
 
 @pytest.mark.asyncio
 async def test_get_person(event_loop, make_get_request):
@@ -21,8 +25,8 @@ async def test_get_persons_data(event_loop, make_get_request):
     assert len(response.body['items']) == 5
 
 @pytest.mark.asyncio
-async def test_get_person_data_by_id(event_loop, make_get_request, validatePersonsJSON):
-
+async def test_get_person_data_by_id(es_client, make_get_request, validatePersonsJSON):
+    # await es_client.bulk(body=query_es_create_persons_documents)
     response = await make_get_request('/persons/ead9b449-734b-4878-86f1-1e4c96a28bb3')
 
     assert response.status == 200

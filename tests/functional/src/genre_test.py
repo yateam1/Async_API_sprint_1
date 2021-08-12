@@ -1,12 +1,18 @@
 import pytest
 
+from ..conftest import query_es_create_genres_documents
+
+@pytest.mark.asyncio
+async def test_make_genres_fixtures(es_client):
+    await es_client.bulk(body=query_es_create_genres_documents)
+
 @pytest.mark.asyncio
 async def test_get_genre(event_loop, make_get_request):
 
     response = await make_get_request('/genres/unknown')
 
     assert response.status == 404
-    assert response.body['detail'] == 'genre not found'
+    assert response.body['detail'] == 'Not found'
 
 @pytest.mark.asyncio
 async def test_get_genres_data(event_loop, make_get_request):

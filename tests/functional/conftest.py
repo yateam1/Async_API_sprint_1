@@ -74,7 +74,7 @@ def make_get_request(session):
     async def inner(method: str, params: dict = None) -> HTTPResponse:
         params = params or {}
         url = service_url + '/api/v1' + method
-        async with session.get(url, params=params) as response:
+        async with session.get(url, params=params)as response:
             return HTTPResponse(
                 body=await response.json(),
                 headers=response.headers,

@@ -1,5 +1,10 @@
 import pytest
 
+from ..conftest import query_es_create_films_documents
+
+@pytest.mark.asyncio
+async def test_make_films_fixtures(es_client):
+    await es_client.bulk(body=query_es_create_films_documents)
 
 @pytest.mark.asyncio
 async def test_get_film(event_loop, make_get_request):

@@ -1,5 +1,9 @@
 import pytest
+from ..conftest import query_es_create_persons_documents
 
+@pytest.mark.asyncio
+async def test_make_persons_fixtures(es_client):
+    await es_client.bulk(body=query_es_create_persons_documents)
 
 @pytest.mark.asyncio
 async def test_search_persons_by_name(event_loop, make_get_request):
