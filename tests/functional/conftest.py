@@ -41,6 +41,7 @@ from elasticsearch import AsyncElasticsearch
 
 from .settings import query_body, HTTPResponse, service_url, es_host
 
+
 @pytest.fixture(scope='session')
 def event_loop(request):
     loop = asyncio.get_event_loop_policy().new_event_loop()
@@ -62,25 +63,20 @@ async def session():
     await session.close()
 
 
-@pytest.fixture(scope='session')
-async def es_bulk_items_add(es_client):
-    await es_client.bulk(body=query_es_create_films_documents)
-    await es_client.bulk(body=query_es_create_genres_documents)
-    await es_client.bulk(body=query_es_create_persons_documents)
-
-
 @pytest.fixture
 def make_get_request(session):
-    async def inner(method: str, params: dict = None) -> HTTPResponse:
+    async def inner(method: str, expected_status_code=200, params: dict = None) -> HTTPResponse:
         params = params or {}
         url = service_url + '/api/v1' + method
         async with session.get(url, params=params) as response:
+            assert response.status == expected_status_code
             return HTTPResponse(
                 body=await response.json(),
                 headers=response.headers,
                 status=response.status,
             )
     return inner
+
 
 @pytest.fixture(scope='session')
 def validateFilmsJSON():
@@ -101,6 +97,7 @@ def validateFilmsJSON():
         return len(set(jsonData.keys()) - set(fields_list)) == 0
     return inner
 
+
 @pytest.fixture(scope='session')
 def validateGenresJSON():
     def inner(jsonData):
@@ -110,6 +107,7 @@ def validateGenresJSON():
         )
         return len(set(jsonData.keys()) - set(fields_list)) == 0
     return inner
+
 
 @pytest.fixture(scope='session')
 def validatePersonsJSON():
