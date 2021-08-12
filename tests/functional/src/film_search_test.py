@@ -9,17 +9,17 @@ async def test_make_films_fixtures(es_client):
 
 
 @pytest.mark.asyncio
-async def test_search_films_by_name(event_loop, make_get_request):
-    response = await make_get_request('/films?query=Movie 2')
+async def test_search_films_by_name(make_get_request):
+    await make_get_request('/films?query=Movie 2')
 
 
 @pytest.mark.asyncio
-async def test_search_films_by_wrong_name(event_loop, make_get_request):
-    response = await make_get_request('/films?query=asd')
+async def test_search_films_by_wrong_name(make_get_request):
+    await make_get_request('/films?query=asd')
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_1(event_loop, make_get_request):
+async def test_search_films_with_size_1(make_get_request):
     response = await make_get_request('/films?size=1')
 
     assert response.body['total'] == 1
@@ -27,7 +27,7 @@ async def test_search_films_with_size_1(event_loop, make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_2(event_loop, make_get_request):
+async def test_search_films_with_size_2(make_get_request):
     response = await make_get_request('/films?size=2')
 
     assert response.body['total'] == 2
@@ -35,7 +35,7 @@ async def test_search_films_with_size_2(event_loop, make_get_request):
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_1_and_from_1(event_loop, make_get_request):
+async def test_search_films_with_size_1_and_from_1(make_get_request):
     response = await make_get_request('/films?size=1&from=1')
 
     assert response.body['total'] == 1
@@ -45,7 +45,7 @@ async def test_search_films_with_size_1_and_from_1(event_loop, make_get_request)
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_1_and_from_2(event_loop, make_get_request):
+async def test_search_films_with_size_1_and_from_2(make_get_request):
     response = await make_get_request('/films?size=1&from=2')
 
     assert response.body['total'] == 1
@@ -55,7 +55,7 @@ async def test_search_films_with_size_1_and_from_2(event_loop, make_get_request)
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_1_and_from_3(event_loop, make_get_request):
+async def test_search_films_with_size_1_and_from_3(make_get_request):
     response = await make_get_request('/films?size=1&from=3')
 
     assert response.body['total'] == 1
@@ -65,7 +65,7 @@ async def test_search_films_with_size_1_and_from_3(event_loop, make_get_request)
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_2_and_from_1(event_loop, make_get_request):
+async def test_search_films_with_size_2_and_from_1(make_get_request):
     response = await make_get_request('/films?size=2&from=1')
 
     assert response.body['total'] == 2
@@ -77,7 +77,7 @@ async def test_search_films_with_size_2_and_from_1(event_loop, make_get_request)
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_2_and_from_2(event_loop, make_get_request):
+async def test_search_films_with_size_2_and_from_2(make_get_request):
     response = await make_get_request('/films?size=2&from=2')
 
     assert response.body['total'] == 2
@@ -89,7 +89,7 @@ async def test_search_films_with_size_2_and_from_2(event_loop, make_get_request)
 
 
 @pytest.mark.asyncio
-async def test_search_films_with_size_2_and_from_3(event_loop, make_get_request):
+async def test_search_films_with_size_2_and_from_3(make_get_request):
     response = await make_get_request('/films?size=2&from=3')
 
     assert response.body['total'] == 2
