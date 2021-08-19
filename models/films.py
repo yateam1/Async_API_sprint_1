@@ -11,6 +11,8 @@ class Film(BaseModel):
     type: FilmWorkTypeEnum = FilmWorkTypeEnum.movie
     creation_date: date
     rating: float = 0.0
+    age_classification: int = 0
+    by_subscription: bool = False
     genres: list[str] = []
     directors: list[str] = []
     actors: list[str] = []
